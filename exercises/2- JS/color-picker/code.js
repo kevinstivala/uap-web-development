@@ -21,4 +21,36 @@ function updateColorBox() {
     const valB = blueInput.value;
 
     // Cambiar el color de fondo del cuadro
-    colorBox.st
+    colorBox.style.backgroundColor = `rgb(${valR}, ${valG}, ${valB})`;
+
+    // Actualizar el texto del color en formato HEX
+    const hexColor = rgbToHex(valR, valG, valB);
+    document.getElementById('color-display-text').textContent = `HEX: ${hexColor}`;
+}
+
+// Función para convertir RGB a HEX
+function rgbToHex(r, g, b) {
+    return (
+        '#' +
+        [r, g, b]
+            .map((x) => {
+                const hex = parseInt(x).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            })
+            .join('')
+    );
+}
+
+// Escuchar el evento 'input' en cada control deslizante
+redInput.addEventListener('input', () => {
+    updateLabel(redInput, redLabel);
+    updateColorBox();
+});
+greenInput.addEventListener('input', () => {
+    updateLabel(greenInput, greenLabel);
+    updateColorBox();
+});
+blueInput.addEventListener('input', () => {
+    updateLabel(blueInput, blueLabel);
+    updateColorBox();
+});
