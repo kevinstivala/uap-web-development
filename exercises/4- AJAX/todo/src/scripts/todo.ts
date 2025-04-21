@@ -37,26 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //AJAX: Agregar una tarea al servidor.
-  async function addTask(text: string) {
-    try {
-      const response = await fetch("http://localhost:3000/api/task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      });
-      if (!response.ok) {
-        throw new Error("HTTP error - status: " + response.status);
-      }
-      const newTask = await response.json();
-      tasks.push(newTask);
-      renderTaskList();
-    } catch (err) {
-      console.error("Error adding task:", err);
-      taskList.innerHTML = "<li>Error adding task</li>";
-    }
-  }
+ const addTask = async (content: string) => {
+    const task: Task = {
+      id: Math.floor(Math.random() * 1000),
+      text: content,
+      completed: false,
+    };
+    tasks.push(task);
+  };
 
   //AJAX: Actualizar una tarea en el servidor.
   async function updateTask(id: number, completed: boolean) {

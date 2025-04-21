@@ -16,7 +16,7 @@
       >
         Lista de Tareas AJAX
       </h1>
-      <form class="flex justify-center mb-4 p-2" id="task-form" action="api/task" method="post">
+      <form class="flex justify-center mb-4 p-2" id="task-form">
         <input
           class="border border-gray-300 rounded-md mr-2 px-4 py-2 focus:outline-none focus:border-green-500"
           type="text"
@@ -24,7 +24,7 @@
           placeholder="Agregar nueva tarea"
           required
         />
-        <button
+        <button action="src/scripts/todo/addTask" method="post"
           class="bg-green-500 text-white hover:bg-green-700 font-bold py-2 px-4 rounded-full"
           type="submit"
         >
