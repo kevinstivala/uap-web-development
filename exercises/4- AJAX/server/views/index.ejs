@@ -39,14 +39,14 @@
         <li
           class="bg-gray-100 shadow-sm rounded-md py-2 px-4 my-2 justify-between items-center flex"
         >
-          <form
-            action="/api/tasks/<%= task.id %>/toggle"
-            method="post"
-            style="display: inline"
-          >
-            <input type="submit" class="h-5 w-5 text-green-500 rounded" <%=
-            task.completed ? 'checked' : '' %>>
-          </form>
+        <form action="/api/tasks/<%= task.id %>/toggle" method="post" style="display: inline">
+          <input 
+              type="checkbox" 
+              class="form-checkbox h-5 w-5 text-green-500 rounded border-gray-300"
+              <%= task.completed ? 'checked' : '' %>
+              onchange="this.form.submit()"
+          />
+      </form>
 
           <span class="<%= task.completed ? 'line-through' : '' %>">
             <%= task.text %>
