@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aplicación To-Do AJAX</title>
+    <script type="module" crossorigin src="/assets/index-zNNVYYIi.js"></script>    <link rel="stylesheet" crossorigin href="/assets/index-Bvrv-iya.css">
+  </head>
+  <body>
+    <div
+      class="bg-white rounded-2xl shadow-md p-4 mx-auto max-w-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    >
+      <h1
+        class="text-4xl font-semibold text-center uppercase text-gray-800 mb-4 p-4"
+      >
+        Lista de Tareas AJAX
+      </h1>
+      <form action="/api/task" method="post" class="flex justify-center mb-4 p-2">
+        <input type="text" name="text" class="border rounded-l px-4 py-2 w-full" required>
+        <button type="submit" class="bg-green-500 text-white hover:bg-green-700 font-bold py-2 px-4 rounded-r">
+            Agregar
+        </button>
+    </form>
+      <ul class="list-none p-0" id="task-list">
+        <% tasks.forEach(task => { %>
+          <li class="bg-gray-100 shadow-sm rounded-md py-2 px-4 my-2 justify-between items-center flex">
+            <form action="/api/tasks/<%= task.id %>/toggle" method="post" style="display: inline;">
+              <input type="submit" 
+                     class="h-5 w-5 text-green-500 rounded" 
+                     <%= task.completed ? 'checked' : '' %>> 
+          </form>
+          
+          <span class="<%= task.completed ? 'line-through' : '' %>">
+              <%= task.text %>
+          </span>
+          
+          <form action="/api/tasks/<%= task.id %>/delete" method="post" style="display: inline;">
+              <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-light py-1 px-2 rounded">
+                  Delete
+              </button>
+          </form>
+          </li>
+      <% }) %>
+      </ul>
+      <div class="flex justify-between mt-4">
+        <button class="mr-10 bg-gray-500 hover:bg-gray-700 text-white font-light py-0.5 px-2 rounded mt-2" id="clear-filter">Limpiar</button>
+
+        <button id="all-filter" class="hover:bg-blue-50 text-gray-500 font-light underline py-0.5 px-1 rounded mt-2 ml-2">Todas</button>
+        <button id="active-filter" class="hover:bg-blue-50 text-gray-500 font-light underline py-0.5 px-1 rounded mt-2 ml-2">Activas</button>
+        <button id="complete-filter" class=" hover:bg-blue-50 text-gray-500 font-light underline py-0.5 px-1 rounded mt-2 ml-2" >Completadas</button>
+      </div>
+    </div>
+  </body>
+</html>

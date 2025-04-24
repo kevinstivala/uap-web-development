@@ -11,6 +11,11 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(express.static('dist'));
+
+app.set('view engine', 'ejs');
+app.set('views', './views'); // Asegúrate de tener tus templates en un directorio 'views'
+
 interface Todo {
     id: number;
     text: string;
@@ -28,6 +33,20 @@ function reassignTaskIds() {
     nextId = tasks.length ? tasks[tasks.length - 1].id + 1 : 1; // Update nextId
     console.log("Tasks after reassigning IDs:", tasks);
 }
+
+
+app.use((req, res, next) => {
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+    );
+    next();
+});
+
+// Ruta raíz que renderiza index.ejs
+app.get('/', (req, res) => {
+    res.render('index', { tasks });
+});
 
 app.get("/api/task", (req, res) => {
     reassignTaskIds();
@@ -48,6 +67,7 @@ app.post("/api/task", (req, res) => {
         res.status(400).json({ error: "Text is required" });
     }
     reassignTaskIds();
+    res.redirect('/');
 });
 
 app.put("/api/task/:id", (req, res) => {
@@ -68,6 +88,20 @@ app.delete("/api/task/:id", (req, res) => {
     tasks = tasks.filter((task) => task.id !== id);
     res.status(204).send();
     reassignTaskIds();
+});
+app.post('/api/tasks/:id/toggle', (req, res) => {
+    const id = parseInt(req.params.id);
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+        task.completed = !task.completed;
+    }
+    res.redirect('/');
+});
+
+app.post('/api/tasks/:id/delete', (req, res) => {
+    const id = parseInt(req.params.id);
+    tasks = tasks.filter(t => t.id !== id);
+    res.redirect('/');
 });
 
 app.listen(port, () => {
