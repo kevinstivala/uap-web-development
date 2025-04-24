@@ -45,7 +45,21 @@ app.use((req, res, next) => {
 
 // Ruta raíz que renderiza index.ejs
 app.get('/', (req, res) => {
-    res.render('index', { tasks });
+    let filteredTasks = [...tasks];
+    const filter = req.query.filter;
+    
+    if (filter === 'active') {
+        filteredTasks = tasks.filter(t => !t.completed);
+    } else if (filter === 'complete') {
+        filteredTasks = tasks.filter(t => t.completed);
+    }
+    
+    res.render('index', { tasks: filteredTasks });
+});
+
+app.post('/api/tasks/clear-completed', (req, res) => {
+    tasks = tasks.filter(t => !t.completed);
+    res.redirect('/');
 });
 
 app.get("/api/task", (req, res) => {
