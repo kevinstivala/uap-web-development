@@ -1,37 +1,29 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Task } from "../types/Task";
+import axios from "axios";
 
 const BASE_URL = "http://localhost:3000/api/task";
 
-export const useTasks = () =>
-    useQuery({
-        queryKey: ["tasks"],
-        queryFn: async () => {
-            const response = await fetch(BASE_URL);
-            if (!response.ok) {
-                throw new Error("Error al obtener tareas");
-            }
-            return response.json();
-        },
+
+export const useTasks = () => {
+    return useQuery<Task[], Error>({
+      queryKey: ['tasks'],
+      queryFn: async () => {
+        const { data } = await axios.get(BASE_URL);
+        return data;
+      },
     });
+  };
 
 export const useAddTask = () => {
     const QueryClient = useQueryClient();
-
     return useMutation({
         mutationFn: async (text: string) => {
-            const response = await fetch(BASE_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ text }),
-            });
-
-            if (!response.ok) {
+            const {data} = await axios.post(BASE_URL, { text });
+            if (!data) {
                 throw new Error("Error al agregar tarea");
             }
-
-            return response.json();
+            return data;
         },
         onSuccess: () => {
             QueryClient.invalidateQueries({queryKey: ["tasks"]});
@@ -42,64 +34,40 @@ export const useAddTask = () => {
 export const useToggleTask = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (task: { id: string; completed: boolean }) => {
-            const response = await fetch(`${BASE_URL}/${task.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ completed: task.completed }), // Removed the negation here
-            });
-
-            if (!response.ok) {
-                throw new Error("Error al actualizar tarea");
-            }
-
-            return response.json();
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["tasks"]});
-        },
+      mutationFn: async ({ id, completed }: { id: string; completed: boolean }) => {
+        const { data } = await axios.put(`${BASE_URL}/${id}`, { completed });
+        if (!data) {
+          throw new Error("Error al actualizar tarea");
+        }
+        return data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      },
     });
-};
+  };
 
-export const useDeleteTask = () => {
+  export const useDeleteTask = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (id: string) => {
-            const response = await fetch(`${BASE_URL}/${id}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) {
-                throw new Error("Error al eliminar tarea");
-            }
-
-            return response.json();
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["tasks"] });
-        },
+      mutationFn: async (id: string) => {
+        await axios.delete(`${BASE_URL}/${id}`);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      },
     });
-};
+  };
 
-export const useClearCompletedTask = () => {
+  export const useClearCompletedTasks = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async () => {
-            const response = await fetch(`${BASE_URL}/completed`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) {
-                throw new Error("Error al eliminar tareas completadas");
-            }
-
-            return response.json();
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["tasks"]});
-        },
+      mutationFn: async () => {
+        await axios.delete(`${BASE_URL}/completed`);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      },
     });
-}
+  };
 
