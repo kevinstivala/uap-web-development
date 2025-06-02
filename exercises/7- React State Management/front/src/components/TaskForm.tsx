@@ -26,7 +26,11 @@ export const TaskForm = () => {
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            addTask.mutate(e as any);
+            if (newTask.trim()) {
+              addTask.mutate(newTask, {
+                onSuccess: () => setNewTask(""),
+              });
+            }
           }
         }}
         placeholder="Agregar nueva tarea"

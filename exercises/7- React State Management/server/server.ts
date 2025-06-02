@@ -31,11 +31,22 @@ function logTasks(operation: string) {
 app.get("/api/task", (req, res) => {
     const limit = parseInt(req.query.limit as string) || 5; // Limite por defecto
     const offset = parseInt(req.query.offset as string) || 0; // Offset por defecto
-    const paginatedTasks = tasks.slice(offset, offset + limit);
+    const filter = req.query.filter as string || "all"; // Filtro por defecto
+
+    let filteredTasks = [...tasks];
+
+    //aplicar filtro
+    if (filter === "activa") {
+        filteredTasks = filteredTasks.filter(task => !task.completed);
+    } else if (filter === "completada") {
+        filteredTasks = filteredTasks.filter(task => task.completed);
+    }
+
+    const paginatedTasks = filteredTasks.slice(offset, offset + limit);
 
     res.json({
         tasks: paginatedTasks,
-        total: tasks.length,
+        total: filteredTasks.length,
         limit,
         offset
     });
