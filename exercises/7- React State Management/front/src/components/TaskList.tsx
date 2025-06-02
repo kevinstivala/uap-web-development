@@ -1,16 +1,17 @@
 import { useTasks } from "../hooks/useTasks";
 import { useUIStore } from "../store/useUIStore";
 import { TaskItem } from "./TaskItem";
+import { Pagination } from "./Pagination";
 
 export const TaskList = () => {
-  const { data: tasks = [], isLoading, error } = useTasks();
+  const { data, isLoading, error } = useTasks();
   const filter = useUIStore((state) => state.filter);
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "activa") return !task.completed;
-    if (filter === "completada") return task.completed;
-    return true; // all
-  });
+  const filteredTasks = data?.tasks.filter((task) => {
+        if (filter === "activa") return !task.completed;
+        if (filter === "completada") return task.completed;
+        return true;
+    }) || [];
 
   return (
     <div>
@@ -29,6 +30,9 @@ export const TaskList = () => {
               <TaskItem key={task.id} task={task} />
             ))}
           </ul>
+          {data && data.total > 0 && (
+            <Pagination total={data.total} />
+          )}
         </>
       )}
     </div>

@@ -1,15 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Task } from "../types/Task";
 import axios from "axios";
+import { useUIStore } from "../store/useUIStore";
 
 const BASE_URL = "http://localhost:3000/api/task";
 
+export interface TaskResponse {
+  tasks: Task[];
+  total: number;
+  limit: number;
+  offset: number;
+};
 
 export const useTasks = () => {
-    return useQuery<Task[], Error>({
-      queryKey: ['tasks'],
+  const offset = useUIStore((state) => state.offset);
+  const limit = useUIStore((state) => state.limit);
+    return useQuery<TaskResponse>({
+      queryKey: ['tasks', offset, limit],
       queryFn: async () => {
-        const { data } = await axios.get(BASE_URL);
+        const { data } = await axios.get(`${BASE_URL}?limit=${limit}&offset=${offset}`);
+        if (!data) {
+          throw new Error("Error al obtener tareas");
+        }
         return data;
       },
     });

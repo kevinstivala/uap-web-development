@@ -27,8 +27,18 @@ function logTasks(operation: string) {
     console.log(`[${operation}] Tasks:`, tasks);
 }
 
+//Añadido: Paginacion por server-side
 app.get("/api/task", (req, res) => {
-    res.json(tasks);
+    const limit = parseInt(req.query.limit as string) || 5; // Limite por defecto
+    const offset = parseInt(req.query.offset as string) || 0; // Offset por defecto
+    const paginatedTasks = tasks.slice(offset, offset + limit);
+
+    res.json({
+        tasks: paginatedTasks,
+        total: tasks.length,
+        limit,
+        offset
+    });
 });
 
 app.post("/api/task", (req, res) => {
