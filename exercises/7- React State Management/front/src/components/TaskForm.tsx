@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useAddTask } from "../hooks/useTasks";
 
-export const TaskForm = () => {
+type TaskFormProps = {
+  boardId: number;
+};
+
+export const TaskForm = ({ boardId }: TaskFormProps) => {
   const [newTask, setNewTask] = useState("");
   const addTask = useAddTask();
 

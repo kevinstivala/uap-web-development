@@ -1,10 +1,9 @@
 import "./App.css";
-import { TaskFilters } from "./components/TaskFilters";
-import { TaskForm } from "./components/TaskForm";
-import { TaskList } from "./components/TaskList";
+import { RouterProvider } from '@tanstack/react-router';
+import { router } from './routes';
 import {Toaster} from "react-hot-toast";
 
-function App() {
+export function App() {
 
   return (
     <>
@@ -20,19 +19,7 @@ function App() {
         },
       }}
     />
-      <div className="bg-gray-200 min-h-screen flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-md p-4 mx-auto max-w-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <h1 className="text-4xl font-semibold text-center text-gray-800 mb-4 p-4">
-            TODO - REACT Tarea 7
-          </h1>
-          <TaskForm />
-          <TaskFilters />
-          <TaskList />
-          <p className="text-center text-gray-300 mt-4">
-            Kevin Stivala {"30928"}
-          </p>
-        </div>
-      </div>
+      <RouterProvider router={router} />
     </>
   );
 }

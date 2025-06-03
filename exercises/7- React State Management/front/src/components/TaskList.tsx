@@ -2,7 +2,11 @@ import { useTasks } from "../hooks/useTasks";
 import { TaskItem } from "./TaskItem";
 import { Pagination } from "./Pagination";
 
-export const TaskList = () => {
+type TaskFormProps = {
+  boardId: number;
+};
+
+export const TaskList = ({ boardId }: TaskFormProps) => {
   const { data, isLoading, error } = useTasks();
 
   return (

@@ -78,6 +78,26 @@ export const useToggleTask = () => {
   });
 };
 
+export const useEditTask = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, text }: { id: string; text: string }) => {
+      const { data } = await axios.put(`${BASE_URL}/${id}`, { text });
+      if (!data) {
+        throw new Error("Error al editar tarea");
+      }
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success("Tarea Editada exitosamente");
+    },
+    onError: () => {
+      toast.error("Error al editar la tarea");
+    },
+  });
+};
+
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
