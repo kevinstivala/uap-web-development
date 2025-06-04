@@ -7,7 +7,6 @@ const port = 3000;
 
 // Enable CORS
 app.use(cors());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -159,4 +158,21 @@ app.get("/", (req, res) => {
 });
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+  console.log(`Health check: http://localhost:${port}/checkStatus`);
+});
+
+// CheckStatus check endpoint
+app.get("/checkStatus", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully");
+  process.exit(0);
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received, shutting down gracefully");
+  process.exit(0);
 });
