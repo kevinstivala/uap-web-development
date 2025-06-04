@@ -55,13 +55,16 @@ app.get("/api/task", (req, res) => {
     filteredTasks = filteredTasks.filter((task) => task.completed);
   }
 
+  const totalFilteredItems = filteredTasks.length;
   const paginatedTasks = filteredTasks.slice(offset, offset + limit);
 
   res.json({
     tasks: paginatedTasks,
-    total: filteredTasks.length,
+    total: totalFilteredItems,
     limit,
     offset,
+    currentPage: Math.floor(offset / limit) + 1,
+    totalPages: Math.ceil(totalFilteredItems / limit),
   });
 });
 

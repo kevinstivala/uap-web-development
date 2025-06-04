@@ -27,24 +27,29 @@ export const Pagination = ({ total }: PaginationProps) => {
   };
 
   return (
-    <div className="flex justify-center items-center gap-4 mt-4">
-      <button
-        onClick={handlePreviousPage}
-        disabled={currentPage === 1}
-        className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-      >
-        Anterior
-      </button>
-      <span className="text-sm text-gray-600">
-        Página {currentPage} de {totalPages}
-      </span>
-      <button
-        onClick={handleNextPage}
-        disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-      >
-        Siguiente
-      </button>
-    </div>
-  );
+        <div className="flex flex-col items-center gap-2">
+            <div className="flex justify-center items-center gap-4 mt-4">
+                <button
+                    onClick={handlePreviousPage}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                    Anterior
+                </button>
+                <span className="text-sm text-gray-600">
+                    Página {currentPage} de {totalPages}
+                </span>
+                <button
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                    Siguiente
+                </button>
+            </div>
+            <div className="text-xs text-gray-500">
+                Mostrando {limit} items por página | Total: {total} items
+            </div>
+        </div>
+    );
 };

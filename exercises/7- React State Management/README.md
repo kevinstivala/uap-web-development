@@ -26,10 +26,10 @@ Implementar las siguientes features, pensando en cómo su estado se integra con 
   - **Descripción en Mayúsculas:** Un interruptor booleano para decidir si la descripción de las tareas debe mostrarse siempre en mayúsculas.
 - **Aplicación de Configuraciones:** Asegurar que los tableros de tareas apliquen las configuraciones definidas en la página de configuraciones (intervalo de refetch y formato de la descripción).
 
-(LISTO)
-
 - **Múltiples Tableros de Tareas:** Implementar la posibilidad de tener múltiples tableros de tareas. Cada tablero deberá tener su propia ruta basada en un identificador único. Se debe poder crear nuevos tableros y eliminar tableros existentes. (utilizar tanstack route)
 
+
+(LISTO)
 
 - **Página de Configuraciones:** Crear una página de configuraciones donde se puedan ajustar parámetros globales. Por ahora, incluir dos configuraciones:
   - **Intervalo de Refetch de Tareas:** Un campo para definir cada cuánto tiempo se deben actualizar las tareas (por defecto: 10 segundos).

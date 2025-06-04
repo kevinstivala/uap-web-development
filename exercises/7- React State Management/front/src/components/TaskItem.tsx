@@ -1,6 +1,8 @@
 import type { Task } from "../types/Task";
 import { useToggleTask, useDeleteTask, useEditTask } from "../hooks/useTasks";
 import { useState } from "react";
+import { useSettingsStore } from '../store/useSettingsStore';
+
 
 interface TaskItemProps {
   task: Task;
@@ -14,6 +16,10 @@ export const TaskItem = ({ task }: TaskItemProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
+
+  const upperCaseDescription = useSettingsStore((state) => state.upperCaseDescription);
+  const displayText = upperCaseDescription ? task.text.toUpperCase() : task.text;
+
 
   const handleToggle = async () => {
     setIsToggling(true);
@@ -76,7 +82,7 @@ export const TaskItem = ({ task }: TaskItemProps) => {
           />
         ) : (
           <span className={task.completed ? "line-through text-gray-500" : ""}>
-            {task.text}
+            {displayText}
           </span>
         )}
       </div>

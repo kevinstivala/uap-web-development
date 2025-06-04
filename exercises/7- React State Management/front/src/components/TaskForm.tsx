@@ -10,12 +10,24 @@ export const TaskForm = ({ boardId }: TaskFormProps) => {
   const addTask = useAddTask();
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
-    addTask.mutate(newTask, {
-      onSuccess: () => setNewTask(""),
-    });
-  };
+        e.preventDefault();
+        if (!newTask.trim()) return;
+        addTask.mutate(
+            { text: newTask, boardId },
+            { onSuccess: () => setNewTask("") }
+        );
+    };
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (newTask.trim()) {
+                addTask.mutate(
+                    { text: newTask, boardId },
+                    { onSuccess: () => setNewTask("") }
+                );
+            }
+        }
+    };
 
   return (
     <form
@@ -27,16 +39,7 @@ export const TaskForm = ({ boardId }: TaskFormProps) => {
         type="text"
         value={newTask}
         onChange={(e) => setNewTask(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            if (newTask.trim()) {
-              addTask.mutate(newTask, {
-                onSuccess: () => setNewTask(""),
-              });
-            }
-          }
-        }}
+        onKeyDown={handleKeyDown}
         placeholder="Agregar nueva tarea"
         required
         disabled={addTask.isPending}

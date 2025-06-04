@@ -3,6 +3,8 @@ import type { Task } from "../types/Task";
 import axios from "axios";
 import { useUIStore } from "../store/useUIStore";
 import toast from "react-hot-toast";
+import { useSettingsStore } from '../store/useSettingsStore';
+
 
 const BASE_URL = "http://localhost:3000/api/task";
 
@@ -13,35 +15,33 @@ export interface TaskResponse {
   offset: number;
 }
 
-export const useTasks = () => {
-  const offset = useUIStore((state) => state.offset);
-  const limit = useUIStore((state) => state.limit);
-  const filter = useUIStore((state) => state.filter);
+export const useTasks = (boardId: number) => {
+    const offset = useUIStore((state) => state.offset);
+    const filter = useUIStore((state) => state.filter);
+    const { refetchInterval, paginationLimit: limit } = useSettingsStore();
 
-  return useQuery<TaskResponse>({
-    queryKey: ["tasks", offset, limit, filter],
-    queryFn: async () => {
-      const { data } = await axios.get(
-        `${BASE_URL}?limit=${limit}&offset=${offset}&filter=${filter}`
-      );
-      if (!data) {
-        throw new Error("Error al obtener tareas");
-      }
-      return data;
-    },
-  });
+    return useQuery<TaskResponse>({
+        queryKey: ['tasks', boardId, filter, offset, limit],
+        queryFn: async () => {
+            const { data } = await axios.get(
+                `${BASE_URL}?boardId=${boardId}&limit=${limit}&offset=${offset}&filter=${filter}`
+            );
+            return data;
+        },
+        refetchInterval,
+    });
 };
 
 export const useAddTask = () => {
   const QueryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (text: string) => {
-      const { data } = await axios.post(BASE_URL, { text });
-      if (!data) {
-        throw new Error("Error al agregar tarea");
-      }
-      return data;
-    },
+    mutationFn: async ({ text, boardId }: { text: string; boardId: number }) => {
+            const { data } = await axios.post(BASE_URL, { text, boardId });
+            if (!data) {
+                throw new Error("Error al agregar tarea");
+            }
+            return data;
+        },
     onSuccess: () => {
       QueryClient.invalidateQueries({ queryKey: ["tasks"] });
       toast.success("¡Tarea agregada exitosamente!");
