@@ -5,6 +5,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useSettingsStore } from "../store/useSettingsStore";
 
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 export const BoardList = () => {
   const [newBoardName, setNewBoardName] = useState("");
   const { refetchInterval } = useSettingsStore();
@@ -14,7 +16,7 @@ export const BoardList = () => {
   const { data: boards, isLoading } = useQuery({
     queryKey: ["boards"],
     queryFn: async () => {
-      const { data } = await axios.get("http://localhost:3000/api/board");
+      const { data } = await axios.get(`${BASE_URL}/api/board`);
       return data;
     },
     refetchInterval,
@@ -22,7 +24,7 @@ export const BoardList = () => {
 
   const createBoard = useMutation({
     mutationFn: async (name: string) => {
-      const { data } = await axios.post("http://localhost:3000/api/board", {
+      const { data } = await axios.post(`${BASE_URL}/api/board`, {
         name,
       });
       return data;
@@ -36,7 +38,7 @@ export const BoardList = () => {
 
   const deleteBoard = useMutation({
     mutationFn: async (id: number) => {
-      await axios.delete(`http://localhost:3000/api/board/${id}`);
+      await axios.delete(`${BASE_URL}/api/board/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });

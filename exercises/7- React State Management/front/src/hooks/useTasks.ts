@@ -5,8 +5,7 @@ import { useUIStore } from "../store/useUIStore";
 import toast from "react-hot-toast";
 import { useSettingsStore } from '../store/useSettingsStore';
 
-
-const BASE_URL = "http://localhost:3000/api/task";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface TaskResponse {
   tasks: Task[];
