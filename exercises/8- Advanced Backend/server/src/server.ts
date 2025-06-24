@@ -1,33 +1,81 @@
 import express from "express";
-import bodyParser from "body-parser";
+import helmet from "helmet";
 import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+
+import { authMiddlewareCookies } from './middleware/auth.middleware';
+import { authRoutes } from './routes/auth.routes';
 
 const app = express();
 const port = 3000;
 
-// Enable CORS
-app.use(cors());
+// 1. Security middleware (first)
+app.use(helmet());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true, // Allow cookies
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
+// 2. Body parsing middleware
+app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
-interface Board {
-  id: number;
-  name: string;
-}
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-  boardId: number;
-}
+// Middleware to parse cookies
+app.use(cookieParser(process.env.JWT_SECRET!)); // Use cookie parser with secret for signed cookies
 
-let boards: Board[] = [];
-let nextBoardId = 1; // Comenzar desde 1 y solo incrementar
+// 3. Logging middleware
+//app.use(requestLogger);
 
-let tasks: Todo[] = [];
-let nextId = 1; // Comenzar desde 1 y solo incrementar
+// 4. Authentication middleware (for protected routes)
+app.use("/api/protected", authMiddlewareCookies);
 
-// Eliminada función reassignTaskIds
+// 5. Route handlers
+app.use("/api/auth", authRoutes);
+app.use("api/boards", boardRoutes);
+
+// 6. Error handling middleware (last)
+//app.use(errorHandler);
+
+// 7. Health check's endpoint's
+// 404 handler
+app.use("*", (req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+app.get("/", (req, res) => {
+  res.send("Backend Avanzado - Tarea 8 - TODO App");
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Health check: http://localhost:${port}/checkStatus`);
+});
+
+// CheckStatus check endpoint
+app.get("/checkStatus", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully");
+  process.exit(0);
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received, shutting down gracefully");
+  process.exit(0);
+});
+
+
+
+
+// VERSION ANTERIOR DEL SISTEMA (TAREA 7) -> TERMINAR TAREA 8. ---------------------------------------------
 
 // Logging para debugging
 function logTasks(operation: string) {
@@ -153,26 +201,4 @@ app.delete("/api/board/:id", (req, res) => {
   logBoard("DELETE");
 });
 
-app.get("/", (req, res) => {
-  res.send("TODO SERVER Tarea 7 - La API esta funcionando.");
-});
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-  console.log(`Health check: http://localhost:${port}/checkStatus`);
-});
 
-// CheckStatus check endpoint
-app.get("/checkStatus", (req, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
-});
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, shutting down gracefully");
-  process.exit(0);
-});
-
-process.on("SIGINT", () => {
-  console.log("SIGINT received, shutting down gracefully");
-  process.exit(0);
-});
