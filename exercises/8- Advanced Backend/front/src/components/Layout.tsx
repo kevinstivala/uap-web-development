@@ -1,10 +1,19 @@
-import { Outlet } from "@tanstack/react-router";
-import { Toaster } from "react-hot-toast";
+import { Outlet, useNavigate } from "@tanstack/react-router";
+import toast, { Toaster } from "react-hot-toast";
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useSettingsStore } from "../store/useSettingsStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const Layout = () => {
+  const { user, logout, fetchUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  //Al cargar la app, intenta restaurar sesión.
+  useEffect(() => {
+    fetchUser(false);
+  }, []);
+
   const refetchInterval = useSettingsStore((state) => state.refetchInterval);
   const [countdown, setCountdown] = useState(refetchInterval / 1000);
 
@@ -23,18 +32,37 @@ export const Layout = () => {
     return () => clearInterval(timer);
   }, [refetchInterval]);
 
+  const handleLogOut = async () => {
+    try {
+      await logout();
+      toast.success("Sesión cerrada correctamente");
+      navigate({ to: "/" });
+    } catch (error: any) {
+      toast.error(error.message || "Error al cerrar sesión");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <header className="bg-blue-600 text-white p-4 text-center">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">TO-DO</h1>
-          <div className="flex gap-4">
+          <div className="flex gap-7">
             <Link to="/" className="text-white hover:text-gray-200">
               Inicio
             </Link>
             <Link to="/settings" className="text-white hover:text-gray-200">
-              ⚙️ Configuración
+              ⚙️Configuración
             </Link>
+            {user ? (
+              <button
+                type="button"
+                onClick={handleLogOut}
+                className="text-white hover:text-gray-200"
+              >
+                🚪Cerrar Sesión
+              </button>
+            ) : null}
           </div>
         </div>
       </header>
@@ -55,10 +83,10 @@ export const Layout = () => {
       </main>
       <footer className="bg-gray-800 text-white p-4 mt-auto">
         <span className="text-sm bg-blue-900 px-2 py-1 rounded justify-center">
-              Próximo refetch: {countdown}s
-            </span>
+          Próximo refetch: {countdown}s
+        </span>
         <div className="text-center text-gray-400 py-4">
-          <p>Kevin Stivala - Alumno 30928 - (Tarea 7)</p>
+          <p>Kevin Stivala - Alumno 30928</p>
         </div>
       </footer>
     </div>

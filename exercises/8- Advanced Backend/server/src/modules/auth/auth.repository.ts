@@ -18,7 +18,7 @@ export class AuthRepository {
   async createUser(userData: CreateUserRequest): Promise<User> {
     const id = uuidv4(); // Generate a unique ID for the user
     await database.run(
-      "INSERT INTO users (id, email, password) VALUES (?, ?, ?)",
+      "INSERT INTO users (id, username, password) VALUES (?, ?, ?)",
       [id, userData.username, userData.password]
     );
     const user = await this.getUserById(id);

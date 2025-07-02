@@ -5,7 +5,7 @@ export class SettingsService {
     async getSettings(userId: string) {
         return this.settingsRepository.getSettings(userId);
     }
-    async updateSettings(userId: string, settings: { refreshInterval?: number, viewMode?: string }) {
+    async updateSettings(userId: string, settings: { refreshInterval?: number, viewMode?: string, upperCaseDescription?: boolean, paginationLimit?: number }) {
         return this.settingsRepository.updateSettings(userId, settings);
     }
 }

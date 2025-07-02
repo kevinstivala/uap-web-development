@@ -12,7 +12,7 @@ export class BoardServices {
   }
 
   async deleteBoard(boardId: string) {
-    await this.deleteBoard(boardId);
+    await this.boardRepository.deleteBoard(boardId);
   }
 
   async shareBoard(
@@ -26,7 +26,7 @@ export class BoardServices {
       ownerId,
       boardId
     );
-    if (ownerId !== "dueño") {
+    if (ownerRole !== "dueño") {
       throw new Error("Solo el dueño púede compartir el tablero");
     }
     await this.boardRepository.addUserToBoard(targetUserId, boardId, role);

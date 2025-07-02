@@ -19,10 +19,10 @@ const port = 3000;
 app.use(helmet());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:5173"],
     credentials: true, // Allow cookies
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -45,6 +45,15 @@ app.use("/api/board", boardRoutes);
 app.use("/api/task", taskRoutes);
 app.use("/api/settings", settingsRoutes)
 
+app.get("/", (req, res) => {
+  res.send("Backend Avanzado - Tarea 8 - TODO App");
+});
+
+// CheckStatus check endpoint
+app.get("/checkStatus", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
 // 6. Error handling middleware (last)
 app.use(errorHandler);
 
@@ -54,18 +63,9 @@ app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-app.get("/", (req, res) => {
-  res.send("Backend Avanzado - Tarea 8 - TODO App");
-});
-
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
   console.log(`Health check: http://localhost:${port}/checkStatus`);
-});
-
-// CheckStatus check endpoint
-app.get("/checkStatus", (req, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // Graceful shutdown

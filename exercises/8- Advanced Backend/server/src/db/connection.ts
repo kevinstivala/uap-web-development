@@ -40,20 +40,22 @@ class Database {
   `);
       await this.run(`
     CREATE TABLE IF NOT EXISTS board_users (
-        userId TEXT NOT NULL,
-        boardId TEXT NOT NULL,
-        role TEXT NOT NULL, -- 'admin' or 'editor', 'lector'
-        PRIMARY KEY (userId, boardId),
-        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY(boardId) REFERENCES boards(id) ON DELETE CASCADE
+      userId TEXT NOT NULL,
+      boardId TEXT NOT NULL,
+      role TEXT NOT NULL, -- 'admin' or 'editor', 'lector'
+      PRIMARY KEY (userId, boardId),
+      FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY(boardId) REFERENCES boards(id) ON DELETE CASCADE
     );
   `);
-  await this.run(`
+      await this.run(`
     CREATE TABLE IF NOT EXISTS user_settings (
-        userId TEXT NOT NULL PRIMARY KEY,
-        refreshInterval INTEGER DEFAULT 60,
-        viewMode TEXT DEFAULT 'list',
-        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
+      userId TEXT NOT NULL PRIMARY KEY,
+      refreshInterval INTEGER DEFAULT 10,
+      upperCaseDescription BOOLEAN DEFAULT 0,
+      paginationLimit INTEGER DEFAULT 5,
+      viewMode TEXT DEFAULT 'list',
+      FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
     );
   `);
     }

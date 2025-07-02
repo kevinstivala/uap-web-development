@@ -10,13 +10,15 @@ const settingsRepository = new SettingsRepository();
 const settingsService = new SettingsService(settingsRepository);
 const settingsController = new SettingsController(settingsService);
 
-router.get("/settings", authMiddlewareCookies, settingsController.getSettings);
+router.get("/", authMiddlewareCookies, settingsController.getSettings);
 router.put(
-  "/settings",
+  "/",
   authMiddlewareCookies,
   [
-    body("refreshInterval").optional().isInt({ min: 10, max: 3600 }),
+    body("refreshInterval").optional().isInt({ min: 10, max: 60 }),
     body("viewMode").optional().isIn(["list", "kanban"]),
+    body("upperCaseDescription").optional().isBoolean(),
+    body("paginationLimit").optional().isInt({ min: 1, max: 20 }),
   ],
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
