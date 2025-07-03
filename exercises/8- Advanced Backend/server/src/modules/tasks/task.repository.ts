@@ -71,30 +71,37 @@ export class TaskRepository {
   async updateTask(id: string, text?: string, completed?: boolean) {
     const updates: string[] = [];
     const params: any[] = [];
-    if(text !== undefined) {
+    if (text !== undefined) {
       updates.push("text = ?");
       params.push(text);
     }
-    if(completed !== undefined) {
+    if (completed !== undefined) {
       updates.push("completed = ?");
       params.push(completed ? 1 : 0);
     }
-    if(updates.length === 0) throw new Error("No se proporcionaron actualizaciones");
+    if (updates.length === 0)
+      throw new Error("No se proporcionaron actualizaciones");
     params.push(id);
-    await database.run(`UPDATE tasks SET ${updates.join(", ")} WHERE id = ?`, params);
+    await database.run(
+      `UPDATE tasks SET ${updates.join(", ")} WHERE id = ?`,
+      params
+    );
     return database.get("SELECT * FROM tasks WHERE id = ?", [id]);
   }
 
-  async deleteTask(id: string) {
-    await database.run("DELETE FROM tasks WHERE id = ?", [id]);
+  async deleteTask(id: string, boardId: string) {
+    await database.run("DELETE FROM tasks WHERE id = ? AND boardId = ?", [id, boardId]);
   }
 
   async deleteCompletedTasks(boardId: string) {
     const result = await database.get<{ count: number }>(
-      "SELECT COUNT(*) as count FROM tasks WHERE boardId = ? AND completed = ?",
-      [boardId, 1]
+      "SELECT COUNT(*) as count FROM tasks WHERE boardId = ? AND completed = 1",
+      [boardId]
     );
-    await database.run("DELETE FROM tasks WHERE boardId = ? AND completed = ?", [boardId, 1]);
+    await database.run(
+      "DELETE FROM tasks WHERE boardId = ? AND completed = 1",
+      [boardId]
+    );
     return result?.count || 0;
   }
 }

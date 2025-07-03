@@ -4,7 +4,7 @@ import { BoardServices } from "./../modules/boards/board.service";
 import { BoardController } from "./../modules/boards/board.controller";
 import { authMiddlewareCookies } from "./../middleware/auth.middleware";
 import { requiereBoardRole } from "../middleware/role.middleware";
-import { body, validationResult } from "express-validator";
+import { body, validationResult, param } from "express-validator";
 
 const router = Router();
 const boardsRepository = new BoardRepository();
@@ -31,9 +31,10 @@ router.post(
 );
 //delete a board (solo el owner del board puede hacer esto.)
 router.delete(
-  "/:id",
+  "/:boardId",
   authMiddlewareCookies,
   requiereBoardRole(["dueño"]),
+  [param("boardId").isString().notEmpty()],
   boardsController.removeBoard
 );
 

@@ -32,9 +32,9 @@ export class TaskService {
     if(!id) throw new Error("Id requerido");
     return this.TaskRepository.updateTask(id, text, completed);
   }
-  async deleteTask(id: string){
+  async deleteTask(id: string, boardId: string){
     if(!id) throw new Error("Id requerido");
-    return this.TaskRepository.deleteTask(id);
+    return this.TaskRepository.deleteTask(id, boardId);
   }
   async deleteCompletedTasks(boardId: string){
     console.log(`Eliminando tareas completadas del tablero: ${boardId}`);

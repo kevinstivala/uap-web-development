@@ -3,7 +3,7 @@ import type { Task } from "../types/Task";
 import axios from "axios";
 import { useUIStore } from "../store/useUIStore";
 import toast from "react-hot-toast";
-import { useSettingsStore } from '../store/useSettingsStore';
+import { useSettingsStore } from "../store/useSettingsStore";
 
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api/task`;
 
@@ -15,32 +15,43 @@ export interface TaskResponse {
 }
 
 export const useTasks = (boardId: string) => {
-    const offset = useUIStore((state) => state.offset);
-    const filter = useUIStore((state) => state.filter);
-    const { refetchInterval, paginationLimit: limit } = useSettingsStore();
+  const offset = useUIStore((state) => state.offset);
+  const filter = useUIStore((state) => state.filter);
+  const { refetchInterval, paginationLimit: limit } = useSettingsStore();
 
-    return useQuery<TaskResponse>({
-        queryKey: ['tasks', boardId, filter, offset, limit],
-        queryFn: async () => {
-            const { data } = await axios.get(
-                `${BASE_URL}?boardId=${boardId}&limit=${limit}&offset=${offset}&filter=${filter}`, {withCredentials: true}
-            );
-            return data;
-        },
-        refetchInterval,
-    });
+  return useQuery<TaskResponse>({
+    queryKey: ["tasks", boardId, filter, offset, limit],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${BASE_URL}?boardId=${boardId}&limit=${limit}&offset=${offset}&filter=${filter}`,
+        { withCredentials: true }
+      );
+      return data;
+    },
+    refetchInterval,
+  });
 };
 
 export const useAddTask = () => {
   const QueryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ text, boardId }: { text: string; boardId: string }) => {
-            const { data } = await axios.post(BASE_URL, { text, boardId }, {withCredentials: true});
-            if (!data) {
-                throw new Error("Error al agregar tarea");
-            }
-            return data;
-        },
+    mutationFn: async ({
+      text,
+      boardId,
+    }: {
+      text: string;
+      boardId: string;
+    }) => {
+      const { data } = await axios.post(
+        BASE_URL,
+        { text, boardId },
+        { withCredentials: true }
+      );
+      if (!data) {
+        throw new Error("Error al agregar tarea");
+      }
+      return data;
+    },
     onSuccess: () => {
       QueryClient.invalidateQueries({ queryKey: ["tasks"] });
       toast.success("¡Tarea agregada exitosamente!");
@@ -63,7 +74,11 @@ export const useToggleTask = () => {
       completed: boolean;
       boardId: string;
     }) => {
-      const { data } = await axios.put(`${BASE_URL}/${id}`, { completed, boardId }, { withCredentials: true });
+      const { data } = await axios.put(
+        `${BASE_URL}/${id}`,
+        { completed, boardId },
+        { withCredentials: true }
+      );
       if (!data) {
         throw new Error("Error al actualizar tarea");
       }
@@ -82,8 +97,20 @@ export const useToggleTask = () => {
 export const useEditTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, text, boardId }: { id: string; text: string, boardId: string }) => {
-      const { data } = await axios.put(`${BASE_URL}/${id}`, { text, boardId },{withCredentials: true});
+    mutationFn: async ({
+      id,
+      text,
+      boardId,
+    }: {
+      id: string;
+      text: string;
+      boardId: string;
+    }) => {
+      const { data } = await axios.put(
+        `${BASE_URL}/${id}`,
+        { text, boardId },
+        { withCredentials: true }
+      );
       if (!data) {
         throw new Error("Error al editar tarea");
       }
@@ -102,8 +129,10 @@ export const useEditTask = () => {
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({id, boardId}: {id: string, boardId: string}) => {
-      await axios.delete(`${BASE_URL}/${id}?boardId=${boardId}`, { withCredentials: true });
+    mutationFn: async ({ id, boardId }: { id: string; boardId: string }) => {
+      await axios.delete(`${BASE_URL}/${id}?boardId=${boardId}`, {
+        withCredentials: true,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
@@ -118,16 +147,18 @@ export const useDeleteTask = () => {
 export const useClearCompletedTasks = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (boardId: string) => {
-      console.log(`Eliminando tareas completadas del tablero: ${boardId}`);
-      await axios.delete(`${BASE_URL}/completed?boardId=${boardId}`, { withCredentials: true});
+    mutationFn: async ({boardId}: {boardId: string}) => {
+      await axios.delete(
+        `${BASE_URL}/?boardId=${boardId}`,
+        { withCredentials: true }
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["tasks"]});
-      toast.success('Tareas Completas eliminadas');
-  },
-  onError: () => {
-      toast.error('Error al eliminar las tareas');
-  }
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast.success("Tareas completadas eliminadas");
+    },
+    onError: () => {
+      toast.error("Error al eliminar las tareas completadas");
+    },
   });
 };

@@ -37,8 +37,8 @@ export const BoardList = () => {
   });
 
   const deleteBoard = useMutation({
-    mutationFn: async (id: number) => {
-      await axios.delete(`${BASE_URL}/api/board/${id}`, {withCredentials: true});
+    mutationFn: async (boardId: number) => {
+      await axios.delete(`${BASE_URL}/api/board/${boardId}`, {withCredentials: true});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });

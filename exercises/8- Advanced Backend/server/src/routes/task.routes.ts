@@ -60,15 +60,10 @@ router.put(
   authMiddlewareCookies,
   requiereBoardRole(["dueño", "editor"]),
   [
-    body("text")
-      .optional()
-      .isString()
-      .isLength({ min: 1, max: 200 })
-      .trim()
-      .escape(),
+    body("text").optional().isString().isLength({ min: 1, max: 200 }).trim().escape(),
     body("completed").optional().isBoolean(),
+    body("boardId").isString().notEmpty(),
   ],
-  [query("boardId").isString().notEmpty()],
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -85,13 +80,6 @@ router.delete(
   "/:id",
   authMiddlewareCookies,
   requiereBoardRole(["dueño", "editor"]),
-  taskController.deleteTask
-);
-//Eliminar tareas completadas.
-router.delete(
-  "/completed",
-  authMiddlewareCookies,
-  requiereBoardRole(["dueño", "editor"]),
   [query("boardId").isString().notEmpty()],
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -99,6 +87,21 @@ router.delete(
       return res
         .status(400)
         .json({ error: "Validación fallida", details: errors.array() });
+    }
+    next();
+  },
+  taskController.deleteTask
+);
+//Eliminar tareas completadas.
+router.delete(
+  "/",
+  authMiddlewareCookies,
+  requiereBoardRole(["dueño", "editor"]),
+  [query("boardId").isString().notEmpty()],
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: "Validación fallida", details: errors.array() });
     }
     next();
   },
