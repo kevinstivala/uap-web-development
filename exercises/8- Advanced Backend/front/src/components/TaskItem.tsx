@@ -6,28 +6,29 @@ import { useSettingsStore } from '../store/useSettingsStore';
 
 interface TaskItemProps {
   task: Task;
+  role: string;
 }
 
-export const TaskItem = ({ task }: TaskItemProps) => {
-  const toogleTask = useToggleTask();
-  const deleteTask = useDeleteTask();
-  const editTask = useEditTask();
-  const [isToggling, setIsToggling] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+export const TaskItem = ({ task, role }: TaskItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
-  const upperCaseDescription = useSettingsStore((state) => state.upperCaseDescription);
+  const editTask = useEditTask();
+  const deleteTask = useDeleteTask();
+  const toggleTask = useToggleTask();
+
+  const upperCaseDescription = useSettingsStore((s) => s.upperCaseDescription);
   const displayText = upperCaseDescription ? task.text.toUpperCase() : task.text;
-
 
   const handleToggle = async () => {
     setIsToggling(true);
-    toogleTask.mutate(
+    toggleTask.mutate(
       {
         id: task.id,
         completed: !task.completed,
-        boardId: String(task.boardId), // Ensure to send boardId
+        boardId: String(task.boardId),
       },
       {
         onSettled: () => setIsToggling(false),
@@ -37,15 +38,19 @@ export const TaskItem = ({ task }: TaskItemProps) => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    deleteTask.mutate({id: String(task.id), boardId: String(task.boardId)}, {
-      onSettled: () => setIsDeleting(false),
-    });
+    deleteTask.mutate(
+      { id: String(task.id), boardId: String(task.boardId) },
+      {
+        onSettled: () => setIsDeleting(false),
+      }
+    );
   };
 
-  const handleEdit = async () => {
+  const handleEdit = () => {
     setIsEditing(true);
     setEditText(task.text);
   };
+
   const handleSaveEdit = async () => {
     if (editText.trim() === task.text) {
       setIsEditing(false);
@@ -58,10 +63,14 @@ export const TaskItem = ({ task }: TaskItemProps) => {
       }
     );
   };
+
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditText(task.text);
   };
+
+  // Solo dueño y editor pueden editar/eliminar
+  const canEdit = role === "dueño" || role === "editor";
 
   return (
     <li className="flex items-center justify-between p-2 border-b">
@@ -71,7 +80,7 @@ export const TaskItem = ({ task }: TaskItemProps) => {
           checked={task.completed}
           onChange={handleToggle}
           className="mr-2"
-          disabled={isEditing}
+          disabled={isEditing || !canEdit}
         />
         {isEditing ? (
           <input
@@ -95,7 +104,7 @@ export const TaskItem = ({ task }: TaskItemProps) => {
               className="text-green-500 hover:text-green-700"
               disabled={editTask.isPending}
             >
-              {editTask.isPending ? "⌛" : "✔️"}
+              💾
             </button>
             <button
               onClick={handleCancelEdit}
@@ -106,19 +115,23 @@ export const TaskItem = ({ task }: TaskItemProps) => {
           </>
         ) : (
           <>
-            <button
-              onClick={handleEdit}
-              className="text-blue-500 hover:text-blue-700"
-            >
-              ✏️
-            </button>
-            <button
-              onClick={handleDelete}
-              className="text-red-500 hover:text-red-700"
-              disabled={isDeleting}
-            >
-              {isDeleting ? "⌛" : "🗑️"}
-            </button>
+            {canEdit && (
+              <button
+                onClick={handleEdit}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                ✏️
+              </button>
+            )}
+            {canEdit && (
+              <button
+                onClick={handleDelete}
+                className="text-red-500 hover:text-red-700"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "⌛" : "🗑️"}
+              </button>
+            )}
           </>
         )}
       </div>

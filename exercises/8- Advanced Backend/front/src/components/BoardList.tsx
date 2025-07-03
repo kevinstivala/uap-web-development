@@ -14,11 +14,12 @@ export const BoardList = () => {
   useFetchSettings(); // Carga la configuración al iniciar
   const queryClient = useQueryClient();
 
-
   const { data: boards, isLoading } = useQuery({
     queryKey: ["boards"],
     queryFn: async () => {
-      const { data } = await axios.get(`${BASE_URL}/api/board`, {withCredentials: true});
+      const { data } = await axios.get(`${BASE_URL}/api/board`, {
+        withCredentials: true,
+      });
       return data;
     },
     refetchInterval,
@@ -26,9 +27,13 @@ export const BoardList = () => {
 
   const createBoard = useMutation({
     mutationFn: async (name: string) => {
-      const { data } = await axios.post(`${BASE_URL}/api/board`, {
-        name,
-      }, {withCredentials: true});
+      const { data } = await axios.post(
+        `${BASE_URL}/api/board`,
+        {
+          name,
+        },
+        { withCredentials: true }
+      );
       return data;
     },
     onSuccess: () => {
@@ -40,7 +45,9 @@ export const BoardList = () => {
 
   const deleteBoard = useMutation({
     mutationFn: async (boardId: number) => {
-      await axios.delete(`${BASE_URL}/api/board/${boardId}`, {withCredentials: true});
+      await axios.delete(`${BASE_URL}/api/board/${boardId}`, {
+        withCredentials: true,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
@@ -87,22 +94,19 @@ export const BoardList = () => {
               className="flex items-center justify-between bg-white p-3 rounded shadow"
             >
               <Link
-                to="/board/$boardId/$name"
-                params={{
-                  boardId: board.id.toString(),
-                  name: board.name.toString(),
-                }}
-                className="text-blue-500 hover:underline"
+                to={`/board/${board.id}/${encodeURIComponent(board.name)}`}
+                className="flex-1 text-lg font-semibold text-blue-700 hover:underline"
               >
                 {board.name}
               </Link>
-              <button
-                onClick={() => deleteBoard.mutate(board.id)}
-                className="text-red-500 hover:text-red-700"
-                disabled={deleteBoard.isPending}
-              >
-                🗑️
-              </button>
+              {board.role === "dueño" && (
+                <button
+                  onClick={() => deleteBoard.mutate(board.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  🗑️
+                </button>
+              )}
             </li>
           ))}
         </ul>

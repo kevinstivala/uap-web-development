@@ -6,9 +6,10 @@ import { useUIStore } from "../store/useUIStore";
 
 type TaskFormProps = {
   boardId: string;
+  role: string;
 };
 
-export const TaskList = ({ boardId }: TaskFormProps) => {
+export const TaskList = ({ boardId, role }: TaskListProps) => {
   const { data, isLoading, error } = useTasks(boardId);
   const setOffset = useUIStore((state) => state.setOffset);
   const filter = useUIStore((state) => state.filter);
@@ -28,16 +29,15 @@ export const TaskList = ({ boardId }: TaskFormProps) => {
           Error al cargar las tareas. Intenta nuevamente.
         </p>
       )}
-      {!isLoading && !error && (
-        <>
-          <ul className="list-none p-0">
-            {data?.tasks?.map((task: any) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
-          </ul>
-          {data && data.total > 0 && <Pagination total={data.total} />}
-        </>
+      {data?.tasks?.length === 0 && (
+        <p className="text-center text-gray-400 my-4">No hay tareas.</p>
       )}
+      <ul>
+        {data?.tasks?.map((task: any) => (
+          <TaskItem key={task.id} task={task} role={role} />
+        ))}
+      </ul>
+      <Pagination total={data?.total || 0} />
     </div>
   );
 };

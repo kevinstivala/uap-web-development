@@ -25,13 +25,14 @@ export const useShareBoard = (boardId: string) => {
 };
 
 export const useChangeUserRole = (boardId: string) => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({targetUserId, newRole}: {targetUserId: string; newRole: string}) => {
-        await axios.put(`${BASE_URL}/api/board/${boardId}/role`, {targetUserId, newRole}, {withCredentials: true});
+      await axios.put(`${BASE_URL}/api/board/${boardId}/role`, {targetUserId, newRole}, {withCredentials: true});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
+      queryClient.invalidateQueries({ queryKey: ["board", boardId] });
     },
   });
 };

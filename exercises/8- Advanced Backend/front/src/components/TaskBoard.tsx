@@ -37,9 +37,9 @@ export const TaskBoard = () => {
       <h2 className="text-xs font-normal text-center text-gray-400 mb-4">
         ID: {boardId}
       </h2>
-      <TaskForm boardId={String(boardId)} />
-      <TaskFilters boardId={String(boardId)} />
-      <TaskList boardId={String(boardId)} />
+      <TaskForm boardId={String(boardId)} role={board.role} />
+      <TaskFilters boardId={String(boardId)} role={board.role} />
+      <TaskList boardId={String(boardId)} role={board.role} />
       <BoardShare board={board} currentUserId={user?.id ?? ""} />
     </div>
   );
