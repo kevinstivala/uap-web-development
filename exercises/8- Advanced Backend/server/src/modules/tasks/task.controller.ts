@@ -52,9 +52,11 @@ export class TaskController {
   };
   deleteCompletedTasks = async (req: Request, res: Response) => {
     const {boardId} = req.query;
+    console.log(`Eliminando tareas completadas del tablero CONTROLLER: ${boardId}`);
     if(!boardId) return res.status(400).json({error: "boardId requerido"});
     try{
         const deletedCount = await this.TaskService.deleteCompletedTasks(String(boardId));
+        console.log(`Tareas completadas eliminadas: ${deletedCount}`);
         res.json({deletedCount});
     } catch(error: any){
         res.status(500).json({error: error.message});

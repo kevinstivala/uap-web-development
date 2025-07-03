@@ -1,7 +1,11 @@
 import { useUIStore, type Filter } from "../store/useUIStore";
 import { useClearCompletedTasks } from "../hooks/useTasks";
 
-export const TaskFilters = () => {
+type TaskFiltersProps = {
+  boardId: string;
+};
+
+export const TaskFilters = ({boardId}: TaskFiltersProps) => {
   const clearCompletedTasks = useClearCompletedTasks();
   const filter = useUIStore((state) => state.filter);
   const setFilter = useUIStore((state) => state.setFilter);
@@ -16,7 +20,7 @@ export const TaskFilters = () => {
     <div className="flex justify-between mt-4">
       <button
         className="mr-10 bg-gray-500 hover:bg-gray-700 text-white font-light py-0.5 px-2 rounded mt-2"
-        onClick={() => clearCompletedTasks.mutate()}
+        onClick={() => clearCompletedTasks.mutate(String(boardId))}
       >
         Limpiar
       </button>

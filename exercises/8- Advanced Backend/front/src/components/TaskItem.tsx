@@ -27,6 +27,7 @@ export const TaskItem = ({ task }: TaskItemProps) => {
       {
         id: task.id,
         completed: !task.completed,
+        boardId: String(task.boardId), // Ensure to send boardId
       },
       {
         onSettled: () => setIsToggling(false),
@@ -36,7 +37,7 @@ export const TaskItem = ({ task }: TaskItemProps) => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    deleteTask.mutate(task.id, {
+    deleteTask.mutate({id: String(task.id), boardId: String(task.boardId)}, {
       onSettled: () => setIsDeleting(false),
     });
   };
@@ -51,7 +52,7 @@ export const TaskItem = ({ task }: TaskItemProps) => {
       return;
     }
     editTask.mutate(
-      { id: task.id, text: editText.trim() },
+      { id: task.id, text: editText.trim(), boardId: String(task.boardId) },
       {
         onSettled: () => setIsEditing(false),
       }

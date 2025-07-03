@@ -12,6 +12,7 @@ export function requiereBoardRole(requiredRoles: string[]) {
       req.params.boardId || req.body.boardId || req.query.boardId;
     const boardId =
       typeof rawBoardId === "string" ? rawBoardId : String(rawBoardId);
+      console.log("Board ID:", rawBoardId);
     if (!userId || !boardId || boardId === "undefined" || boardId === "NaN") {
       return res
         .status(400)

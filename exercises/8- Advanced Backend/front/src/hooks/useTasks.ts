@@ -57,11 +57,13 @@ export const useToggleTask = () => {
     mutationFn: async ({
       id,
       completed,
+      boardId,
     }: {
       id: string;
       completed: boolean;
+      boardId: string;
     }) => {
-      const { data } = await axios.put(`${BASE_URL}/${id}`, { completed }, { withCredentials: true });
+      const { data } = await axios.put(`${BASE_URL}/${id}`, { completed, boardId }, { withCredentials: true });
       if (!data) {
         throw new Error("Error al actualizar tarea");
       }
@@ -80,8 +82,8 @@ export const useToggleTask = () => {
 export const useEditTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, text }: { id: string; text: string }) => {
-      const { data } = await axios.put(`${BASE_URL}/${id}`, { text },{withCredentials: true});
+    mutationFn: async ({ id, text, boardId }: { id: string; text: string, boardId: string }) => {
+      const { data } = await axios.put(`${BASE_URL}/${id}`, { text, boardId },{withCredentials: true});
       if (!data) {
         throw new Error("Error al editar tarea");
       }
@@ -100,8 +102,8 @@ export const useEditTask = () => {
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      await axios.delete(`${BASE_URL}/${id}`, { withCredentials: true });
+    mutationFn: async ({id, boardId}: {id: string, boardId: string}) => {
+      await axios.delete(`${BASE_URL}/${id}?boardId=${boardId}`, { withCredentials: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
@@ -116,8 +118,9 @@ export const useDeleteTask = () => {
 export const useClearCompletedTasks = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
-      await axios.delete(`${BASE_URL}/completed`, { withCredentials: true});
+    mutationFn: async (boardId: string) => {
+      console.log(`Eliminando tareas completadas del tablero: ${boardId}`);
+      await axios.delete(`${BASE_URL}/completed?boardId=${boardId}`, { withCredentials: true});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ["tasks"]});

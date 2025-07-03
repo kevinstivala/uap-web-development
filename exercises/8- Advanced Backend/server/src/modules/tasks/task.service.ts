@@ -37,6 +37,7 @@ export class TaskService {
     return this.TaskRepository.deleteTask(id);
   }
   async deleteCompletedTasks(boardId: string){
+    console.log(`Eliminando tareas completadas del tablero: ${boardId}`);
     if(!boardId) throw new Error("BoardId requerido");
     return this.TaskRepository.deleteCompletedTasks(boardId);
   }

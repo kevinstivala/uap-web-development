@@ -91,10 +91,10 @@ export class TaskRepository {
 
   async deleteCompletedTasks(boardId: string) {
     const result = await database.get<{ count: number }>(
-      "SELECT COUNT(*) as count FROM tasks WHERE boardId = ? AND completed = 1",
-      [boardId]
+      "SELECT COUNT(*) as count FROM tasks WHERE boardId = ? AND completed = ?",
+      [boardId, 1]
     );
-    await database.run("DELETE FROM tasks WHERE boardId = ? AND completed = 1", [boardId]);
+    await database.run("DELETE FROM tasks WHERE boardId = ? AND completed = ?", [boardId, 1]);
     return result?.count || 0;
   }
 }

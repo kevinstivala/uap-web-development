@@ -54,7 +54,7 @@ router.post(
   },
   taskController.addTask
 );
-//Editar tarea.
+//Editar tarea. (checkbox, texto)
 router.put(
   "/:id",
   authMiddlewareCookies,
@@ -68,6 +68,7 @@ router.put(
       .escape(),
     body("completed").optional().isBoolean(),
   ],
+  [query("boardId").isString().notEmpty()],
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
