@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAddTask } from "../hooks/useTasks";
 
 type TaskFormProps = {
-  boardId: number;
+  boardId: string;
 };
 
 export const TaskForm = ({ boardId }: TaskFormProps) => {

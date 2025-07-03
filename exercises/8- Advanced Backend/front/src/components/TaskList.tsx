@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useUIStore } from "../store/useUIStore";
 
 type TaskFormProps = {
-  boardId: number;
+  boardId: string;
 };
 
 export const TaskList = ({ boardId }: TaskFormProps) => {

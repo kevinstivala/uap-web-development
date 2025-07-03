@@ -50,7 +50,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
     );
     set({ user: null, loading: false, error: null });
-    setTimeout(() => {isManualLogout = false;}, 1000);
+    setTimeout(() => {
+      isManualLogout = false;
+    }, 1000);
     wasLoggedIn = false;
   },
   fetchUser: async (strict = false) => {

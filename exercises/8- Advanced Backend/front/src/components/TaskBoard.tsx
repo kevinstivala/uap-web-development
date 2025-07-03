@@ -11,12 +11,13 @@ export const TaskBoard = () => {
       <Link to="/" className="text-blue-500 mb-4 block">
         ← Volver a tableros
       </Link>
-      <h1 className="text-4xl font-semibold text-center text-gray-800 mb-4">
-        Tablero #{boardId} -{name}
+      <h1 className="text-4xl font-semibold text-center text-gray-800 mb-2">
+        Tablero: "{name}"
       </h1>
-      <TaskForm boardId={parseInt(boardId)} />
+      <h2 className="text-xs font-normal text-center text-gray-400 mb-4">ID: {boardId}</h2>
+      <TaskForm boardId={String(boardId)} />
       <TaskFilters />
-      <TaskList boardId={parseInt(boardId)} />
+      <TaskList boardId={String(boardId)} />
     </div>
   );
 };

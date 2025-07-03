@@ -15,35 +15,35 @@ export class TaskRepository {
     filter?: string;
     search?: string;
   }) {
-    let query = "SELECT * FROM tasks WHERE boardId = ?";
+    let query = "SELECT * FROM tasks WHERE boardId = ? ";
     const params: any[] = [boardId];
 
     if (filter === "activa") {
-      query += " AND completed = 0";
+      query += "AND completed = 0 ";
     } else if (filter === "completada") {
-      query += " AND completed = 1";
+      query += "AND completed = 1 ";
     }
 
     if (search) {
-      query += " AND text LIKE ?";
+      query += "AND text LIKE ? ";
       params.push(`%${search}%`);
     }
 
-    query += "ORDER BY id DESC LIMIT ? OFFSET ?";
+    query += "ORDER BY id DESC LIMIT ? OFFSET ? ";
     params.push(limit, offset);
 
     const tasks = await database.all(query, params);
 
     //total para paginación
-    let countQuery = "SELECT COUNT(*) as count FROM tasks WHERE boardId = ?";
+    let countQuery = "SELECT COUNT(*) as count FROM tasks WHERE boardId = ? ";
     const countParams: any[] = [boardId];
     if (filter === "activa") {
-      countQuery += " AND completed = 0";
+      countQuery += "AND completed = 0 ";
     } else if (filter === "completada") {
-      countQuery += " AND completed = 1";
+      countQuery += "AND completed = 1 ";
     }
     if (search) {
-      countQuery += " AND text LIKE ?";
+      countQuery += "AND text LIKE ? ";
       countParams.push(`%${search}%`);
     }
     const total = await database.get<{ count: number }>(
@@ -62,8 +62,8 @@ export class TaskRepository {
   async addTask(text: string, boardId: string) {
     const id = uuidv4();
     await database.run(
-      "INSERT INTO tasks (id, text, completed, boardId) VALUES (?, ?, 0, ?)",
-      [id, text, boardId]
+      "INSERT INTO tasks (id, text, completed, boardId) VALUES (?, ?, ?, ?)",
+      [id, text, 0, boardId]
     );
     return { id, text, completed: false, boardId };
   }

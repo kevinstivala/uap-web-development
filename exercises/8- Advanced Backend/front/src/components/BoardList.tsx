@@ -16,7 +16,7 @@ export const BoardList = () => {
   const { data: boards, isLoading } = useQuery({
     queryKey: ["boards"],
     queryFn: async () => {
-      const { data } = await axios.get(`${BASE_URL}/api/board`);
+      const { data } = await axios.get(`${BASE_URL}/api/board`, {withCredentials: true});
       return data;
     },
     refetchInterval,
@@ -26,7 +26,7 @@ export const BoardList = () => {
     mutationFn: async (name: string) => {
       const { data } = await axios.post(`${BASE_URL}/api/board`, {
         name,
-      });
+      }, {withCredentials: true});
       return data;
     },
     onSuccess: () => {
@@ -38,7 +38,7 @@ export const BoardList = () => {
 
   const deleteBoard = useMutation({
     mutationFn: async (id: number) => {
-      await axios.delete(`${BASE_URL}/api/board/${id}`);
+      await axios.delete(`${BASE_URL}/api/board/${id}`, {withCredentials: true});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });

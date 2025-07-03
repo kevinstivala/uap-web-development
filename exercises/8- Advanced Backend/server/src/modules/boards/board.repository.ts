@@ -10,7 +10,7 @@ export class BoardRepository {
     await database.run("INSERT INTO boards (id, name, ownerId) VALUES (?, ?, ?)", [boardId, name, ownerId]);
     //Asignar owner en board_users:
     await database.run("INSERT INTO board_users (userId, boardId, role) VALUES (?, ?, ?)", [ownerId, boardId, "dueño"]);
-    return {id: boardId, name, ownerId};
+    return {id: boardId, name, ownerId, role: "dueño"};
   }
   async deleteBoard(boardId: string) {
     await database.run("DELETE FROM boards WHERE id = ?",[boardId]);

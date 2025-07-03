@@ -25,7 +25,7 @@ export class TaskService {
     });
   }
   async addTask(text:string, boardId: string){
-    if(!text || !boardId) throw new Error("Datos requqeridos");
+    if(!text || !boardId) throw new Error("Datos requeridos");
     return this.TaskRepository.addTask(text, boardId);
   }
   async updateTask(id: string, text?: string, completed?: boolean){
