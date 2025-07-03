@@ -1,23 +1,46 @@
 import { database } from "../../db/connection";
-import {v4 as uuidv4} from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 export class BoardRepository {
-  async getBoardsForUser(userId: string){
-    return database.all("SELECT b.* FROM boards b JOIN board_users bu ON bu.boardId = b.id WHERE bu.userId = ?", [userId]);
+  async getBoardById(boardId: string) {
+    return database.get("SELECT * FROM boards WHERE id = ?", [boardId]);
+  }
+
+  async getBoardUsers(boardId: string) {
+    return database.all(
+      `SELECT u.id as userId, u.username, bu.role
+     FROM board_users bu
+     JOIN users u ON u.id = bu.userId
+     WHERE bu.boardId = ?`,
+      [boardId]
+    );
+  }
+
+  async getBoardsForUser(userId: string) {
+    return database.all(
+      "SELECT b.* FROM boards b JOIN board_users bu ON bu.boardId = b.id WHERE bu.userId = ?",
+      [userId]
+    );
   }
   async addBoard(name: string, ownerId: string) {
     const boardId = uuidv4();
-    await database.run("INSERT INTO boards (id, name, ownerId) VALUES (?, ?, ?)", [boardId, name, ownerId]);
+    await database.run(
+      "INSERT INTO boards (id, name, ownerId) VALUES (?, ?, ?)",
+      [boardId, name, ownerId]
+    );
     //Asignar owner en board_users:
-    await database.run("INSERT INTO board_users (userId, boardId, role) VALUES (?, ?, ?)", [ownerId, boardId, "dueño"]);
-    return {id: boardId, name, ownerId, role: "dueño"};
+    await database.run(
+      "INSERT INTO board_users (userId, boardId, role) VALUES (?, ?, ?)",
+      [ownerId, boardId, "dueño"]
+    );
+    return { id: boardId, name, ownerId, role: "dueño" };
   }
   async deleteBoard(boardId: string) {
-    await database.run("DELETE FROM boards WHERE id = ?",[boardId]);
-    await database.run("DELETE FROM board_users WHERE boardId = ?",[boardId]);
-    await database.run("DELETE FROM tasks WHERE boardId = ?",[boardId]);
+    await database.run("DELETE FROM boards WHERE id = ?", [boardId]);
+    await database.run("DELETE FROM board_users WHERE boardId = ?", [boardId]);
+    await database.run("DELETE FROM tasks WHERE boardId = ?", [boardId]);
   }
-    //Permisos Repo:
+  //Permisos Repo:
   async getUserRoleOnBoards(
     userId: string,
     boardId: string

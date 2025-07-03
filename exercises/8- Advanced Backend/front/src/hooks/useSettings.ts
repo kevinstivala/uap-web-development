@@ -6,28 +6,28 @@ import { useEffect } from "react";
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api/settings`;
 
 export const useFetchSettings = () => {
-  const query = useQuery({
-    queryKey: ["userSettings"],
+ // console.log("useFetchSettings", );
+  const queryResult = useQuery({
+    queryKey: ["userSettings", ],
     queryFn: async () => {
       const { data } = await axios.get(BASE_URL, { withCredentials: true });
       return data;
     },
+     // Solo ejecuta si hay usuario
   });
 
   useEffect(() => {
-    const settings = query.data;
-    if (settings) {
-      // Actualiza el store global con lo que llega del backend
-      if (settings.refreshInterval)
-        useSettingsStore.getState().setRefetchInterval(settings.refreshInterval)
-      if (settings.upperCaseDescription !== undefined)
-        useSettingsStore.getState().setUpperCaseDescription(!!settings.upperCaseDescription);
-      if (settings.paginationLimit)
-        useSettingsStore.getState().setPaginationLimit(settings.paginationLimit);
-    }
-  }, [query.data]);
+    const settings = queryResult.data;
+    if (!settings) return;
+    if (settings.refreshInterval)
+      useSettingsStore.getState().setRefetchInterval(settings.refreshInterval);
+    if (settings.upperCaseDescription !== undefined)
+      useSettingsStore.getState().setUpperCaseDescription(!!settings.upperCaseDescription);
+    if (settings.paginationLimit)
+      useSettingsStore.getState().setPaginationLimit(settings.paginationLimit);
+  }, [queryResult.data]);
 
-  return query;
+  return queryResult;
 };
 
 export const useUpdateSettings = () => {

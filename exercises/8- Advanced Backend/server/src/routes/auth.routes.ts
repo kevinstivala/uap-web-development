@@ -57,5 +57,6 @@ router.post(
 );
 router.post("/logout", authController.logout);
 router.get("/user", authMiddlewareCookies, authController.getUser);
+router.get("/list", authMiddlewareCookies, authController.getAllUsers);
 
 export { router as authRoutes };

@@ -48,4 +48,8 @@ export class AuthService {
     if (!user) return undefined;
     return { id: user.id, username: user.username };
   }
+
+  async getAllUsers (): Promise<User[]> {
+    return this.authRepository.getAllUsers();
+  }
 }

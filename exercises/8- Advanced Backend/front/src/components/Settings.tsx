@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSettingsStore } from '../store/useSettingsStore';
 import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
-import { useFetchSettings, useUpdateSettings } from '../hooks/useSettings';
+import { useUpdateSettings } from '../hooks/useSettings';
 
 export const Settings = () => {
     const {
@@ -14,7 +14,7 @@ export const Settings = () => {
         setPaginationLimit,
     } = useSettingsStore();
 
-    const { data } = useFetchSettings();
+    //const { data } = useFetchSettings();
     const updateSettings = useUpdateSettings();
     const queryClient = useQueryClient();
 
@@ -54,7 +54,7 @@ export const Settings = () => {
             upperCaseDescription: local.upperCaseDescription,
             paginationLimit: local.paginationLimit,
         });
-        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+        queryClient.invalidateQueries({ queryKey: ['userSettings'] });
         toast.success('Configuración guardada');
     };
 

@@ -5,6 +5,18 @@ import { BoardServices } from "./board.service";
 export class BoardController {
   constructor(private boardServices: BoardServices) {}
 
+  getBoardById = async (req: Request, res: Response) => {
+  const { boardId } = req.params;
+  const userId = req.user!.userId;
+  try {
+    const board = await this.boardServices.getBoardById(boardId, userId);
+    if (!board) return res.status(404).json({ error: "No se encontró el tablero" });
+    res.json(board);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
   getBoardsForUser = async (req: Request, res: Response) => {
     const userId = req.user!.userId as UserPayload['userId'];
     try{

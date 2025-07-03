@@ -4,14 +4,16 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useSettingsStore } from "../store/useSettingsStore";
+import { useFetchSettings } from "../hooks/useSettings";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const BoardList = () => {
   const [newBoardName, setNewBoardName] = useState("");
   const { refetchInterval } = useSettingsStore();
-
+  useFetchSettings(); // Carga la configuración al iniciar
   const queryClient = useQueryClient();
+
 
   const { data: boards, isLoading } = useQuery({
     queryKey: ["boards"],

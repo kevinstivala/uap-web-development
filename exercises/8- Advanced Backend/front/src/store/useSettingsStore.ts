@@ -13,7 +13,7 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
     persist(
         (set) => ({
-            refetchInterval: 10000, // 10 seconds default
+            refetchInterval: 5000, // 5 seconds default
             upperCaseDescription: false,
             paginationLimit: 5,
             setRefetchInterval: (interval) => set({ refetchInterval: interval }),

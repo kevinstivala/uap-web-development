@@ -3,6 +3,24 @@ import { BoardRepository } from "./board.repository";
 export class BoardServices {
   constructor(private boardRepository: BoardRepository) {}
 
+async getBoardById(boardId: string, userId: string) {
+  // Obtiene el board
+  const board = await this.boardRepository.getBoardById(boardId);
+  if (!board) return null;
+
+  // Obtiene el rol del usuario actual en ese board
+  const role = await this.boardRepository.getUserRoleOnBoards(userId, boardId);
+
+  // Obtiene los usuarios compartidos (id, username, role)
+  const sharedUsers = await this.boardRepository.getBoardUsers(boardId);
+
+  return {
+    ...board,
+    role,
+    sharedUsers,
+  };
+}
+
   async getBoardsForUser(userId: string) {
     return this.boardRepository.getBoardsForUser(userId);
   }

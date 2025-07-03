@@ -13,6 +13,14 @@ const boardsController = new BoardController(boardsService);
 
 //get all boards ( visualicen los del propio usuario logeado o los habilitados para compartir con el usuario asignado.)
 router.get("/", authMiddlewareCookies, boardsController.getBoardsForUser);
+
+router.get(
+  "/:boardId",
+  authMiddlewareCookies,
+  requiereBoardRole(["dueño", "editor", "lector"]),
+  boardsController.getBoardById
+);
+
 //add a board
 router.post(
   "/",
