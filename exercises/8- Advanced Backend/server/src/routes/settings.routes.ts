@@ -15,8 +15,7 @@ router.put(
   "/",
   authMiddlewareCookies,
   [
-    body("refreshInterval").optional().isInt({ min: 10, max: 60 }),
-    body("viewMode").optional().isIn(["list", "kanban"]),
+    body("refreshInterval").optional().isInt({ min: 5000, max: 30000 }),
     body("upperCaseDescription").optional().isBoolean(),
     body("paginationLimit").optional().isInt({ min: 1, max: 20 }),
   ],

@@ -7,12 +7,12 @@ export class SettingsController {
     getSettings = async (req: Request, res: Response) => {
     const userId = req.user!.userId as UserPayload['userId'];
     const settings = await this.settingsService.getSettings(userId);
-    res.json(settings || {refreshInterval: 10, upperCaseDescription: false, paginationLimit: 5, viewMode: "list"});
+    res.json(settings || {refreshInterval: 5000, upperCaseDescription: false, paginationLimit: 5});
 }
 updateSettings = async (req: Request, res: Response) => {
     const userId = req.user!.userId as UserPayload['userId'];
-    const { refreshInterval, viewMode, upperCaseDescription, paginationLimit } = req.body;
-    const updated = await this.settingsService.updateSettings(userId, { refreshInterval, viewMode, upperCaseDescription, paginationLimit });
+    const { refreshInterval, upperCaseDescription, paginationLimit } = req.body;
+    const updated = await this.settingsService.updateSettings(userId, { refreshInterval, upperCaseDescription, paginationLimit });
     res.json(updated);
 }
 }

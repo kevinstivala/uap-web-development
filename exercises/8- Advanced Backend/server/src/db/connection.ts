@@ -54,7 +54,6 @@ class Database {
       refreshInterval INTEGER DEFAULT 10,
       upperCaseDescription BOOLEAN DEFAULT 0,
       paginationLimit INTEGER DEFAULT 5,
-      viewMode TEXT DEFAULT 'list',
       FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
     );
   `);

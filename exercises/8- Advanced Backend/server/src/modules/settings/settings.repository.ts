@@ -10,25 +10,22 @@ export class SettingsRepository {
     userId: string,
     settings: {
       refreshInterval?: number;
-      viewMode?: string;
       upperCaseDescription?: boolean;
       paginationLimit?: number;
     }
   ) {
     await database.run(
       `
-            INSERT INTO user_settings (userId, refreshInterval, viewMode, upperCaseDescription, paginationLimit)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO user_settings (userId, refreshInterval, upperCaseDescription, paginationLimit)
+            VALUES (?, ?, ?, ?)
             ON CONFLICT(userId) DO UPDATE SET
                 refreshInterval = excluded.refreshInterval,
-                viewMode = excluded.viewMode,
                 upperCaseDescription = excluded.upperCaseDescription,
                 paginationLimit = excluded.paginationLimit
         `,
       [
         userId,
-        settings.refreshInterval ?? 10,
-        settings.viewMode ?? "list",
+        settings.refreshInterval ?? 5000,
         settings.upperCaseDescription ? 1 : 0,
         settings.paginationLimit ?? 5,
       ]
