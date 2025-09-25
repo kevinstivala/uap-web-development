@@ -1,76 +1,30 @@
-// ...existing code...
 import React from 'react';
-import { View, ScrollView, Text, Pressable, Alert, Platform } from 'react-native';
-import CursoCard from '../../components/CursoCard';
-import cursos from '@/data/cursos.json';
-import { clearAllProgress } from '@/services/storage';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import courses from '../../data/cursos.json';
+import CursoCard from '@/components/CursoCard';
+import { useRouter } from 'expo-router';
 
-export default function CursosScreen() {
-  async function runClearAll() {
-    try {
-      console.log('Ejecutando clearAllProgress...');
-      await clearAllProgress();
-      console.log('clearAllProgress completado');
-      if (Platform.OS === 'web') {
-        window.alert('Se eliminaron todos los progresos');
-      } else {
-        Alert.alert('Listo', 'Se eliminaron todos los progresos');
-      }
-    } catch (err) {
-      console.error('Error clearing progress', err);
-      if (Platform.OS === 'web') {
-        window.alert('Error: No se pudo eliminar los progresos');
-      } else {
-        Alert.alert('Error', 'No se pudo eliminar los progresos');
-      }
-    }
-  }
-
-  function handleClearAll() {
-    console.log('handleClearAll pressed (platform:', Platform.OS, ')');
-    if (Platform.OS === 'web') {
-      const ok = window.confirm(
-        '¿Desea eliminar todo el progreso guardado en la app? Esta acción no se puede deshacer.'
-      );
-      if (ok) runClearAll();
-      return;
-    }
-
-    Alert.alert(
-      'Eliminar todos los progresos',
-      '¿Desea eliminar todo el progreso guardado en la app? Esta acción no se puede deshacer.',
-      [
-        { text: 'Cancelar', style: 'cancel', onPress: () => console.log('clear canceled') },
-        { text: 'Eliminar', style: 'destructive', onPress: () => runClearAll() },
-      ],
-      { cancelable: true }
-    );
-  }
+export default function CursosList() {
+  const router = useRouter();
 
   return (
-    <ScrollView style={{ padding: 16 }}>
-      {/* Botón para depuración / reset global */}
-      <Pressable
-        onPress={handleClearAll}
-        style={{
-          marginBottom: 12,
-          padding: 10,
-          backgroundColor: '#d32f2f',
-          borderRadius: 8,
-          alignSelf: 'stretch',
-        }}
-      >
-        <Text style={{ color: '#fff', fontWeight: '700', textAlign: 'center' }}>Eliminar todos los progresos</Text>
-      </Pressable>
+    <View style={styles.page}>
+      <Text style={styles.header}>Cursos</Text>
+      <Text style={styles.sub}>Selecciona un curso para comenzar</Text>
 
-      <Text style={{ fontSize: 28, fontWeight: '700', marginBottom: 12 }}>Cursos Disponibles</Text>
-
-      <View>
-        {cursos.map((c: any) => (
-          <CursoCard key={c.id} course={c} />
-        ))}
-      </View>
-    </ScrollView>
+      <FlatList
+        data={courses}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingVertical: 8 }}
+        renderItem={({ item }) => <CursoCard course={item} />}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      />
+    </View>
   );
 }
-// ...existing code...
+
+const styles = StyleSheet.create({
+  page: { flex: 1, paddingVertical: 8 },
+  header: { fontSize: 22, fontWeight: '800', marginBottom: 4 },
+  sub: { color: '#6b7280', marginBottom: 12 },
+});

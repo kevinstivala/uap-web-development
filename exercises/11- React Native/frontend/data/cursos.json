@@ -26,7 +26,7 @@
       },
       {
         "id": "q3",
-        "verse": "Hebreos 14:7",
+        "verse": "Hebreos 4:15,16",
         "text": "¿Cuál es el mensaje principal?",
         "choices": [
           { "id": "a", "text": "Amor de Dios", "correct": true, "reflection": "Dios nos ama incondicionalmente." },
