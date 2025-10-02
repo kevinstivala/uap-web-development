@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "dev": "nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
-  "build": "tsc -p tsconfig.json",
-  "start": "node dist/src/index.js"
-},
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc --outDir dist",
+    "start": "npm run build && node dist/index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,7 +18,8 @@
     "ethers": "^6.15.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "siwe": "^3.0.0"
+    "siwe": "^3.0.0",
+    "tsx": "^4.20.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
